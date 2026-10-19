@@ -1,0 +1,72 @@
+# MEDMIND 160: biblioteca visual para CONAREME 2027
+
+Primera versión funcional. Es una página web estática (HTML, CSS y JavaScript): no necesita servidor, base de datos, claves ni internet para funcionar.
+
+## Qué incluye
+
+- Buscador (ignora tildes y mayúsculas) y filtros por especialidad y tipo de ficha.
+- 1 ficha completa de demostración: **Vías biliares: colangitis aguda y coledocolitiasis**.
+- 8 temas pendientes (casi todos de Reumatología) que aparecen como "Próximamente".
+- Botón **Imprimir o guardar como PDF**: oculta los controles y deja la ficha en formato A4.
+- Mini caso clínico con autoevaluación (elige una opción y ves la explicación).
+
+> **Importante:** el contenido médico de la ficha de demostración es un borrador hecho con ayuda de IA. Está contrastado solo en parte con las guías citadas y **no ha sido revisado por un médico o docente**. Verifícalo en las fuentes de la propia ficha antes de estudiarlo.
+
+## Cómo probarla en tu computadora
+
+1. Descarga y descomprime la carpeta `medmind160`.
+2. Haz doble clic en `index.html`. Se abre en tu navegador.
+3. Prueba: escribe `charcot` en el buscador, filtra por Reumatología, abre la ficha y pulsa **Imprimir o guardar como PDF**. En el cuadro de impresión elige "Guardar como PDF" y tamaño A4.
+
+Si solo quieres un archivo, usa `autonomo/index.html`: tiene todo (estilos, código y fichas) dentro de un único archivo.
+
+## Estructura de carpetas
+
+```
+medmind160/
+├── index.html          La página (estructura básica)
+├── css/styles.css      Colores, tamaños e impresión A4
+├── js/fichas.js        EL CONTENIDO: aquí se agregan y editan las fichas
+├── js/app.js           La lógica (búsqueda, filtros, mostrar fichas)
+├── autonomo/index.html Versión de un solo archivo (se genera con build.py)
+├── build.py            Genera la versión autónoma
+└── README.md           Esta guía
+```
+
+El contenido (`fichas.js`) está separado de la lógica (`app.js`): para estudiar y agregar fichas solo necesitas tocar `fichas.js`.
+
+## Cómo agregar una ficha nueva
+
+1. Abre `js/fichas.js` con un editor de texto (el Bloc de notas sirve; VS Code es mejor).
+2. Al inicio del archivo hay una **PLANTILLA** comentada. Cópiala.
+3. Pégala dentro de la lista, después de la última ficha y separada por una coma.
+4. Rellena los campos. Usa `**así**` para poner negritas.
+5. Guarda y recarga la página (F5). La ficha aparece sola, y la especialidad o el tipo nuevos aparecen como filtros.
+
+Para convertir un tema pendiente en ficha completa: cambia `estado: "pendiente"` por `estado: "completa"` y agrega las secciones (pivote, diagnóstico, diferenciales, algoritmos, trampas, caso, fuentes). Si te falta una sección, la ficha igualmente se abre y la consola del navegador (F12) te avisa qué falta.
+
+Regla de honestidad: deja `revisado: false` hasta que un docente o tú mismo hayas verificado todo contra fuentes fiables.
+
+## Cómo publicarla gratis con GitHub Pages (sin instalar nada)
+
+1. Crea una cuenta en https://github.com.
+2. Pulsa **New repository**. Nómbralo `medmind160`, déjalo **Public** y créalo.
+3. En el repositorio, pulsa **Add file → Upload files** y arrastra el **contenido** de la carpeta `medmind160` (`index.html`, `css`, `js`, `README.md`). Pulsa **Commit changes**.
+4. Ve a **Settings → Pages**. En "Build and deployment" elige **Deploy from a branch**, rama `main`, carpeta `/ (root)` y pulsa **Save**.
+5. Espera uno o dos minutos. Tu página estará en `https://TU-USUARIO.github.io/medmind160/`.
+
+Cada vez que edites `fichas.js`, vuelve a subir ese archivo (**Add file → Upload files**) y la página se actualiza sola.
+
+## Cómo regenerar el archivo autónomo
+
+Si tienes Python instalado, desde la carpeta del proyecto ejecuta:
+
+```
+python3 build.py
+```
+
+Se crea o actualiza `autonomo/index.html`.
+
+## Lo que todavía NO incluye (a propósito)
+
+Versión pequeña y funcional. Aún no hay: marcar fichas favoritas, progreso de estudio, modo oscuro, imágenes ni esquemas dibujados, ni más fichas completas. Se añaden cuando la base te resulte cómoda.
