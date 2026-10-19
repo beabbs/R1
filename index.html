@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MEDMIND 160, biblioteca visual para CONAREME 2027</title>
+  <meta name="description" content="Fichas médicas visuales de una página para preparar el Residentado Médico del Perú.">
+  <style>
+/* =====================================================================
+   MEDMIND 160 · ESTILOS
+   Los colores y tamaños principales están en las variables de :root.
+   Cambia un valor allí y se actualiza toda la página.
+   ===================================================================== */
+
+:root {
+  color-scheme: light;
+
+  --bg: #fcf9f4;          /* blanco cálido */
+  --surface: #ffffff;
+  --ink: #2c2a35;
+  --muted: #625f70;
+  --line: #e8e1d4;
+
+  --lav: #ece7fa;         /* lavanda */
+  --lav-ink: #4f3f93;
+  --mint: #def3ea;        /* menta */
+  --mint-ink: #1d654c;
+  --beige: #f4ecdd;       /* beige */
+  --beige-ink: #70531c;
+  --rose: #fbe6ec;        /* rosa */
+  --rose-ink: #8f3452;
+
+  --accent: #5a4a9e;
+  --accent-dark: #44367f;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 1px 2px rgba(60, 50, 90, .06), 0 6px 18px rgba(60, 50, 90, .05);
+
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-title: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-title);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--ink);
+}
+h1 { font-size: clamp(1.7rem, 4.2vw, 2.4rem); letter-spacing: -.01em; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 1rem; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; }
+
+a { color: var(--accent); }
+a:hover { color: var(--accent-dark); }
+
+:focus-visible {
+  outline: 3px solid #8f7fd6;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+main:focus { outline: none; }
+h1:focus { outline: none; }
+
+.wrap {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.skip {
+  position: absolute;
+  left: -999px;
+  top: 8px;
+  background: var(--surface);
+  padding: 8px 14px;
+  border-radius: 8px;
+  z-index: 10;
+}
+.skip:focus { left: 12px; }
+
+/* ---------- Encabezado ---------- */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner { padding-top: 14px; padding-bottom: 14px; }
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--lav);
+  color: var(--lav-ink);
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text strong { font-family: var(--font-title); font-size: 1.15rem; letter-spacing: .01em; }
+.brand-text small { color: var(--muted); font-size: .85rem; }
+
+main { padding-top: 28px; padding-bottom: 48px; }
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 20px 0 32px;
+  color: var(--muted);
+  font-size: .88rem;
+}
+
+/* ---------- Biblioteca ---------- */
+.intro { max-width: 46rem; margin-bottom: 22px; }
+.intro p { margin-top: 8px; color: var(--muted); font-size: 1.05rem; }
+
+.panel-busqueda {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 16px;
+}
+
+.buscador label { display: block; font-weight: 600; margin-bottom: 6px; }
+.buscador input {
+  width: 100%;
+  font: inherit;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--ink);
+}
+.buscador input:focus { border-color: #8f7fd6; outline: none; box-shadow: 0 0 0 3px #e3dcfa; }
+
+.filtros { display: grid; gap: 12px; }
+.grupo-filtro { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.grupo-filtro .titulo { font-weight: 600; margin-right: 4px; font-size: .95rem; }
+
+.chip {
+  font: inherit;
+  font-size: .92rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.chip:hover { background: var(--lav); }
+.chip[aria-pressed="true"] {
+  background: var(--lav);
+  border-color: #a99ae0;
+  color: var(--lav-ink);
+  font-weight: 600;
+}
+
+.resultados-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 22px 0 14px;
+  color: var(--muted);
+}
+.link-btn {
+  font: inherit;
+  background: none;
+  border: none;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+.card--pendiente { background: #fffdf9; box-shadow: none; border-style: dashed; }
+.card-etiquetas { display: flex; flex-wrap: wrap; gap: 6px; }
+.card p { color: var(--muted); font-size: .96rem; flex: 1; }
+.card-pie { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  background: var(--beige);
+  color: var(--beige-ink);
+}
+.badge--esp { background: var(--lav); color: var(--lav-ink); }
+.badge--tipo { background: var(--mint); color: var(--mint-ink); }
+.badge--demo { background: var(--rose); color: var(--rose-ink); }
+.badge--pend { background: var(--beige); color: var(--beige-ink); }
+
+.btn {
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { background: var(--accent-dark); color: #fff; }
+.btn--suave { background: var(--surface); color: var(--accent); }
+.btn--suave:hover { background: var(--lav); color: var(--accent-dark); }
+.btn--off {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--muted);
+  cursor: default;
+}
+.btn--off:hover { background: transparent; color: var(--muted); }
+
+.vacio {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 36px 16px;
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+}
+
+/* ---------- Ficha ---------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.ficha { display: grid; gap: 16px; }
+.ficha-cabecera {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 10px;
+}
+.ficha-cabecera .card-etiquetas { margin-bottom: 2px; }
+.ficha-cabecera p { color: var(--muted); }
+.ficha-meta { font-size: .9rem; }
+
+.aviso {
+  background: var(--rose);
+  color: #5d2236;
+  border: 1px solid #f1c4d0;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: .93rem;
+}
+.aviso strong { color: var(--rose-ink); }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+.panel > h2 { margin-bottom: 0; }
+.panel--pivote { background: var(--lav); border-color: #d8cff4; }
+.panel--diagnostico { background: var(--mint); border-color: #c3e6d7; }
+.panel--diferenciales { background: var(--beige); border-color: #e6d9bf; }
+.panel--trampas { background: var(--rose); border-color: #f1c4d0; }
+.panel--caso { background: var(--mint); border-color: #c3e6d7; }
+.panel--fuentes { background: var(--beige); border-color: #e6d9bf; }
+
+.destacado {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  line-height: 1.35;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+.lista { display: grid; gap: 8px; padding-left: 1.2rem; }
+.lista li { padding-left: 2px; }
+
+.diagnostico-principal {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+}
+
+.criterios { display: grid; gap: 10px; background: var(--surface); border-radius: var(--radius-sm); padding: 14px 16px; }
+.criterios h3 { font-size: 1.02rem; }
+.criterio-grupo h4 { color: var(--mint-ink); margin-bottom: 2px; }
+.criterio-grupo ul { list-style: none; display: grid; gap: 2px; font-size: .95rem; }
+.reglas { display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 10px; }
+
+.dif-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.dif {
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+.dif h3 { font-size: 1rem; }
+.dif p { font-size: .94rem; color: var(--ink); }
+
+/* Algoritmos */
+.panel--algoritmo { background: var(--surface); }
+.flow-bloque { display: grid; gap: 12px; }
+.flow-bloque + .flow-bloque { border-top: 1px solid var(--line); padding-top: 18px; }
+.flow { list-style: none; display: grid; gap: 0; }
+.paso {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  padding-bottom: 18px;
+}
+.paso:last-child { padding-bottom: 0; }
+.paso::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 34px;
+  bottom: 2px;
+  width: 2px;
+  background: #d8cff4;
+}
+.paso:last-child::before { display: none; }
+.paso-num {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--lav);
+  color: var(--lav-ink);
+  font-weight: 700;
+}
+.paso-cuerpo { display: grid; gap: 6px; align-content: start; padding-top: 4px; }
+.paso-cuerpo p { font-size: .96rem; }
+
+.ramas { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 4px; }
+.rama {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  font-size: .93rem;
+}
+.rama strong { font-size: .98rem; }
+.rama-accion { font-weight: 600; border-top: 1px solid rgba(0,0,0,.12); padding-top: 6px; }
+.tono-leve { background: var(--mint); color: #17493a; }
+.tono-moderado { background: var(--beige); color: #55400f; }
+.tono-grave { background: var(--rose); color: #6a2339; }
+.tono-neutro { background: var(--lav); color: #35296f; }
+
+.trampas { display: grid; gap: 8px; padding-left: 1.2rem; }
+
+/* Caso clínico */
+.caso-enunciado { background: var(--surface); border-radius: var(--radius-sm); padding: 14px 16px; }
+.caso-pregunta { font-weight: 700; }
+.opciones { display: grid; gap: 8px; }
+.opcion {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  align-items: start;
+  gap: 10px;
+  text-align: left;
+  font: inherit;
+  padding: 10px 12px;
+  border: 1.5px solid #c3e6d7;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  cursor: pointer;
+}
+.opcion:hover { border-color: var(--mint-ink); }
+.opcion-letra {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--mint);
+  color: var(--mint-ink);
+  font-weight: 700;
+}
+.opcion.correcta { border-color: #2a8a66; background: #e4f6ee; }
+.opcion.incorrecta { border-color: #c2587a; background: #fdecf1; }
+.opcion:disabled { cursor: default; color: var(--ink); }
+
+.respuesta {
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: grid;
+  gap: 8px;
+}
+.respuesta .veredicto { font-weight: 700; }
+.respuesta .veredicto.ok { color: var(--mint-ink); }
+.respuesta .veredicto.mal { color: var(--rose-ink); }
+
+.fuentes { display: grid; gap: 8px; padding-left: 1.2rem; font-size: .94rem; }
+.fuentes a { word-break: break-word; }
+
+/* ---------- Pantallas pequeñas ---------- */
+@media (max-width: 560px) {
+  .wrap { padding: 0 14px; }
+  main { padding-top: 20px; }
+  .panel, .ficha-cabecera { padding: 16px; }
+  .destacado, .diagnostico-principal { font-size: 1.15rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+/* =====================================================================
+   IMPRESIÓN (A4): oculta los controles y deja la ficha legible en papel
+   ===================================================================== */
+@page { size: A4; margin: 12mm; }
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    box-shadow: none !important;
+  }
+  html { font-size: 9.5pt; }
+  body { background: #fff; color: #000; line-height: 1.4; }
+
+  .no-print, .site-header, .site-footer, .toolbar, .skip { display: none !important; }
+
+  .wrap { max-width: none; padding: 0; }
+  main { padding: 0; }
+
+  h1 { font-size: 17pt; }
+  h2 { font-size: 12pt; }
+  h3 { font-size: 10.5pt; }
+
+  .ficha { gap: 8px; }
+  .ficha-cabecera, .panel { padding: 10px 12px; border-radius: 10px; }
+  .panel { gap: 8px; }
+  /* Los paneles largos pueden partirse entre páginas; lo pequeño se mantiene junto */
+  .dif, .rama, .paso, .criterios, .respuesta, .caso-enunciado, .opcion { break-inside: avoid; page-break-inside: avoid; }
+  .panel > h2, .flow-bloque > h3, .paso-cuerpo > h4 { break-after: avoid; page-break-after: avoid; }
+  .ficha-cabecera { break-inside: avoid; }
+
+  /* Los navegadores parten mal las cuadrículas entre páginas (se solapan
+     bloques), así que en papel los contenedores largos pasan a flujo normal. */
+  .ficha, .panel, .flow-bloque, .flow, .paso-cuerpo { display: block; }
+  .ficha > * + *, .panel > * + *, .flow-bloque > * + *, .paso-cuerpo > * + * { margin-top: 8px; }
+  .paso { display: flex; gap: 10px; }
+  .paso-cuerpo { flex: 1; }
+  .flow-bloque + .flow-bloque { margin-top: 14px; }
+  .aviso { font-size: 8.5pt; padding: 6px 10px; }
+  .destacado, .diagnostico-principal { font-size: 11.5pt; padding: 8px 10px; }
+  .dif-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .dif, .rama { padding: 7px 9px; }
+  .ramas { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .paso { padding-bottom: 10px; }
+
+  /* En papel siempre se muestra la respuesta del caso clínico */
+  .respuesta[hidden] { display: grid !important; }
+  .respuesta .veredicto:empty { display: none; }
+  .opcion { cursor: default; }
+  .btn, .opciones-reiniciar { display: none !important; }
+
+  /* En papel se imprime la dirección de cada enlace de las fuentes */
+  .fuentes a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    word-break: break-all;
+  }
+}
+
+</style>
+</head>
+<body>
+  <a class="skip no-print" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header no-print">
+    <div class="wrap header-inner">
+      <a class="brand" href="#/" aria-label="MEDMIND 160, volver a la biblioteca">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span class="brand-text">
+          <strong>MEDMIND 160</strong>
+          <small>Biblioteca visual para CONAREME 2027</small>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <main id="contenido" class="wrap" tabindex="-1">
+    <noscript><p class="aviso">Esta página necesita JavaScript activado para mostrar las fichas.</p></noscript>
+  </main>
+
+  <footer class="site-footer no-print">
+    <div class="wrap">
+      <p>Material de estudio personal. El contenido médico debe verificarse en las fuentes citadas en cada ficha antes de usarlo para estudiar o decidir conductas clínicas.</p>
+    </div>
+  </footer>
+
+  <script>
+/* =====================================================================
+   MEDMIND 160 · CONTENIDO DE LAS FICHAS
+   ---------------------------------------------------------------------
+   Este archivo contiene SOLO contenido (texto médico). La lógica de la
+   página vive en app.js. Para agregar una ficha nueva:
+
+     1. Copia el bloque "PLANTILLA" de más abajo (o una ficha completa).
+     2. Pégalo dentro de la lista MEDMIND_FICHAS, separado por una coma.
+     3. Cambia el id (sin espacios ni tildes, p. ej. "lupus-eritematoso").
+     4. Guarda y recarga la página: aparecerá sola en la biblioteca.
+
+   Trucos:
+     - Para poner negrita en un texto escribe **así**.
+     - estado: "completa" abre la ficha; "pendiente" muestra la tarjeta
+       como "Próximamente" (sirve para ir planificando temas).
+     - Si borras una sección (por ejemplo "trampas") la ficha sigue
+       funcionando: simplemente no se muestra esa sección.
+     - Nunca marques revisado: true si un docente o un médico no ha
+       verificado el contenido contra fuentes fiables.
+
+   PLANTILLA (copiar, pegar y rellenar):
+
+   {
+     id: "tema-en-minusculas",
+     titulo: "Nombre del tema",
+     especialidad: "Reumatología",
+     tipo: "Ficha clínica",            // o "Algoritmo" / "Cuadro comparativo"
+     descripcion: "Una o dos frases que resumen la ficha.",
+     etiquetas: ["palabra clave 1", "palabra clave 2"],
+     estado: "completa",
+     revisado: false,
+     actualizado: "2026-10-19",
+     verificacion: { nota: "Qué se contrastó y qué falta verificar." },
+     pivote: { destacado: "La frase clave.", puntos: ["punto 1", "punto 2"] },
+     diagnostico: { principal: "Diagnóstico más probable", explicacion: "Por qué." },
+     diferenciales: [{ nombre: "Otro diagnóstico", claves: "Cómo distinguirlo." }],
+     algoritmos: [{ titulo: "Título del algoritmo", pasos: [
+       { titulo: "Paso 1", detalle: "Qué hacer." }
+     ]}],
+     trampas: ["Error frecuente 1"],
+     caso: {
+       enunciado: "Paciente de ...",
+       pregunta: "¿Cuál es el siguiente paso?",
+       opciones: [{ letra: "A", texto: "..." }, { letra: "B", texto: "..." }],
+       correcta: "A",
+       explicacion: "Por qué A es correcta."
+     },
+     fuentes: [{ texto: "Autor. Título. Revista. Año.", url: "https://..." }]
+   }
+   ===================================================================== */
+
+window.MEDMIND_FICHAS = [
+
+  /* ------------------------------------------------------------------
+     FICHA DE DEMOSTRACIÓN COMPLETA
+     ------------------------------------------------------------------ */
+  {
+    id: "vias-biliares-colangitis",
+    titulo: "Vías biliares: colangitis aguda y coledocolitiasis",
+    especialidad: "Gastroenterología",
+    tipo: "Ficha clínica",
+    descripcion:
+      "Del cólico biliar a la colangitis: cómo distinguir colecistitis, coledocolitiasis, colangitis y pancreatitis biliar, y cuándo drenar la vía biliar.",
+    etiquetas: [
+      "colangitis", "coledocolitiasis", "colecistitis", "ictericia", "Charcot",
+      "Reynolds", "CPRE", "Tokio", "litiasis biliar", "pancreatitis biliar",
+      "Mirizzi", "Courvoisier", "cirugía"
+    ],
+    estado: "completa",
+    revisado: false,
+    actualizado: "2026-10-19",
+    verificacion: {
+      nota:
+        "Borrador de demostración elaborado con ayuda de IA. Se contrastaron con fuentes públicas (resúmenes de las Guías de Tokio 2018, MDCalc y resumen de la guía ASGE 2019) la estructura de los criterios diagnósticos, la clasificación por gravedad, el momento del drenaje, la CPRE como método de elección y la estratificación de riesgo de coledocolitiasis. Los umbrales numéricos finos (leucocitos, bilirrubina, albúmina, tamaño del colédoco) no se pudieron comprobar en el texto completo: confírmalos en las guías originales de la sección Fuentes. Aún NO ha sido revisado por un médico o docente."
+    },
+
+    pivote: {
+      destacado:
+        "Dolor en hipocondrio derecho + fiebre + ictericia (tríada de Charcot) → sospecha **colangitis aguda**.",
+      puntos: [
+        "**Reynolds** = Charcot + hipotensión + alteración del estado mental: colangitis grave.",
+        "La colangitis es una **infección sobre una vía biliar obstruida**: sin drenaje, los antibióticos solos pueden fallar.",
+        "La tríada completa no siempre aparece: apóyate en inflamación sistémica + colestasis + imagen (criterios de Tokio).",
+        "Ictericia **indolora** y progresiva con vesícula palpable no dolorosa (Courvoisier) → pensar en obstrucción maligna, no en litiasis."
+      ]
+    },
+
+    diagnostico: {
+      principal: "Colangitis aguda por coledocolitiasis",
+      explicacion:
+        "Un cálculo en el colédoco obstruye el flujo de bilis y la bilis estancada se infecta, habitualmente por bacterias entéricas gramnegativas. La coledocolitiasis es la causa más frecuente de colangitis aguda.",
+      tablaTitulo: "Criterios diagnósticos de colangitis aguda (Tokio 2018)",
+      tabla: [
+        {
+          grupo: "A. Inflamación sistémica",
+          items: [
+            "A-1: fiebre (>38 °C) y/o escalofríos",
+            "A-2: laboratorio con respuesta inflamatoria (leucocitos <4 000 o >10 000/µL; PCR ≥1 mg/dL)"
+          ]
+        },
+        {
+          grupo: "B. Colestasis",
+          items: [
+            "B-1: ictericia (bilirrubina total ≥2 mg/dL)",
+            "B-2: pruebas hepáticas anormales (FA, GGT, AST, ALT >1,5 × límite superior normal)"
+          ]
+        },
+        {
+          grupo: "C. Imagen",
+          items: [
+            "C-1: dilatación de la vía biliar",
+            "C-2: evidencia de la causa (cálculo, estenosis, stent…)"
+          ]
+        }
+      ],
+      reglaSospecha: "**Sospecha:** un ítem de A + un ítem de B **o** C.",
+      reglaDefinitivo: "**Definitivo:** un ítem de A + un ítem de B + un ítem de C."
+    },
+
+    diferenciales: [
+      {
+        nombre: "Cólico biliar",
+        claves:
+          "Dolor que suele resolver en horas, sin fiebre ni leucocitosis; laboratorio normal; ecografía con litiasis vesicular."
+      },
+      {
+        nombre: "Colecistitis aguda",
+        claves:
+          "Dolor persistente (más de unas 6 h), fiebre, signo de Murphy, pared vesicular engrosada o líquido pericolecístico. Bilirrubina normal o levemente elevada."
+      },
+      {
+        nombre: "Coledocolitiasis sin colangitis",
+        claves:
+          "Patrón colestásico (↑ bilirrubina, FA, GGT) y colédoco dilatado o cálculo en imagen, pero **sin** fiebre ni respuesta inflamatoria sistémica."
+      },
+      {
+        nombre: "Pancreatitis aguda biliar",
+        claves:
+          "Epigastralgia irradiada a la espalda con lipasa o amilasa >3 × límite superior normal. Puede coexistir con colangitis: busca fiebre e ictericia."
+      },
+      {
+        nombre: "Síndrome de Mirizzi",
+        claves:
+          "Cálculo en el cístico o en la bolsa de Hartmann que comprime el conducto hepático común: ictericia en el contexto de colecistitis."
+      },
+      {
+        nombre: "Obstrucción maligna (cabeza de páncreas, ampolla, colangiocarcinoma)",
+        claves:
+          "Ictericia indolora y progresiva, pérdida de peso, vesícula palpable no dolorosa (Courvoisier); fiebre ausente al inicio."
+      },
+      {
+        nombre: "Hepatitis aguda",
+        claves:
+          "Patrón hepatocelular: transaminasas muy elevadas respecto a FA y GGT, sin dilatación de la vía biliar."
+      },
+      {
+        nombre: "Colangitis esclerosante primaria",
+        claves:
+          "Colestasis crónica, asociación con enfermedad inflamatoria intestinal; la CPRM muestra estenosis multifocales de la vía biliar."
+      }
+    ],
+
+    algoritmos: [
+      {
+        titulo: "Paciente con sospecha de colangitis aguda",
+        pasos: [
+          {
+            titulo: "Sospecha: dolor en hipocondrio derecho + fiebre y/o ictericia",
+            detalle:
+              "Evalúa signos vitales. Si hay inestabilidad, inicia reanimación sin esperar el diagnóstico definitivo."
+          },
+          {
+            titulo: "Laboratorio + ecografía",
+            detalle:
+              "Hemograma, PCR, bilirrubina, FA/GGT, transaminasas, lipasa, creatinina, INR y plaquetas. Ecografía abdominal (vesícula, calibre del colédoco, cálculos). Hemocultivos, sobre todo en grados II y III."
+          },
+          {
+            titulo: "Aplicar los criterios de Tokio",
+            detalle: "¿Cumple criterios de sospecha o definitivos? (ver tabla de diagnóstico)."
+          },
+          {
+            titulo: "Clasificar la gravedad",
+            ramas: [
+              {
+                tono: "leve",
+                etiqueta: "Grado I, leve",
+                texto: "No cumple criterios de grado II ni III."
+              },
+              {
+                tono: "moderado",
+                etiqueta: "Grado II, moderada",
+                texto:
+                  "Al menos **2** de: leucocitos >12 000 o <4 000/mm³; fiebre ≥39 °C; edad ≥75 años; bilirrubina total ≥5 mg/dL; hipoalbuminemia."
+              },
+              {
+                tono: "grave",
+                etiqueta: "Grado III, grave",
+                texto:
+                  "Disfunción de **algún órgano**: hipotensión que requiere vasopresores, alteración de la conciencia, PaO₂/FiO₂ <300, oliguria o creatinina >2 mg/dL, INR >1,5, plaquetas <100 000/mm³."
+              }
+            ]
+          },
+          {
+            titulo: "Tratamiento inicial en todos los grados",
+            detalle:
+              "Antibióticos empíricos según gravedad, origen (comunitario o nosocomial) y antibiograma local; líquidos intravenosos, analgesia y ayuno."
+          },
+          {
+            titulo: "Drenaje biliar según el grado",
+            ramas: [
+              {
+                tono: "leve",
+                etiqueta: "Grado I",
+                texto: "Suele bastar el tratamiento médico.",
+                accion: "Drenar si no hay respuesta en 24 h."
+              },
+              {
+                tono: "moderado",
+                etiqueta: "Grado II",
+                texto: "Es el grado donde el drenaje precoz mejora el pronóstico.",
+                accion: "Drenaje precoz, endoscópico o percutáneo."
+              },
+              {
+                tono: "grave",
+                etiqueta: "Grado III",
+                texto: "Soporte respiratorio y circulatorio.",
+                accion: "Drenaje urgente en cuanto haya estabilidad."
+              }
+            ]
+          },
+          {
+            titulo: "Método de drenaje",
+            detalle:
+              "**CPRE** (esfinterotomía y extracción de cálculos, o stent / drenaje nasobiliar) es de elección. Si no es posible o fracasa: drenaje biliar percutáneo transhepático."
+          },
+          {
+            titulo: "Tratar la causa y prevenir recidivas",
+            detalle:
+              "Resuelta la colangitis, tratar la etiología (extracción de cálculos) y realizar **colecistectomía** si hay litiasis vesicular."
+          }
+        ]
+      },
+      {
+        titulo: "Si NO hay colangitis: ¿probabilidad de coledocolitiasis? (ASGE 2019)",
+        pasos: [
+          {
+            titulo: "Estratifica el riesgo con clínica, laboratorio e imagen",
+            ramas: [
+              {
+                tono: "grave",
+                etiqueta: "Probabilidad alta",
+                texto:
+                  "Cálculo en el colédoco visible en imagen, **o** colangitis clínica, **o** bilirrubina total >4 mg/dL con colédoco dilatado.",
+                accion: "CPRE directa."
+              },
+              {
+                tono: "moderado",
+                etiqueta: "Probabilidad intermedia",
+                texto:
+                  "Pruebas hepáticas anormales, **o** edad >55 años, **o** colédoco dilatado en imagen (sin criterios de alta).",
+                accion:
+                  "Ecoendoscopia o CPRM (o evaluación intraoperatoria durante la colecistectomía)."
+              },
+              {
+                tono: "leve",
+                etiqueta: "Probabilidad baja",
+                texto: "Ninguno de los criterios anteriores.",
+                accion: "Colecistectomía sin estudio adicional de la vía biliar."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+
+    trampas: [
+      "**No esperes la tríada completa.** Charcot no aparece siempre; usa los criterios de Tokio.",
+      "En colangitis grado II–III, **el antibiótico no reemplaza al drenaje**. Si preguntan el siguiente paso, suele ser el drenaje biliar (CPRE).",
+      "No operes de urgencia la vesícula de un paciente con colangitis antes de drenar y estabilizar: la colecistectomía se hace una vez resuelto el cuadro.",
+      "**CPRM** es diagnóstica y no invasiva; **CPRE** es terapéutica y tiene riesgos (pancreatitis post-CPRE, sangrado, perforación). No la uses solo para “mirar” si la probabilidad es intermedia.",
+      "Bilirrubina muy elevada en una colecistitis aguda: sospecha coledocolitiasis asociada o síndrome de Mirizzi; no asumas “solo colecistitis”.",
+      "Ictericia indolora con vesícula palpable no dolorosa → neoplasia (Courvoisier), no litiasis.",
+      "Pancreatitis aguda biliar **sin** colangitis ni obstrucción: no requiere CPRE urgente (<48 h). Sí la requiere si hay colangitis u obstrucción biliar.",
+      "Una ecografía normal del colédoco no descarta cálculos distales: combina con laboratorio y, si hace falta, CPRM o ecoendoscopia."
+    ],
+
+    caso: {
+      enunciado:
+        "Mujer de 58 años con 2 días de dolor en hipocondrio derecho, escalofríos e ictericia. T 39,2 °C, FC 108 lpm, PA 118/72 mmHg, consciente y orientada. Laboratorio: leucocitos 18 000/mm³, bilirrubina total 4,6 mg/dL, FA 380 U/L, creatinina 0,9 mg/dL, INR 1,1, plaquetas 210 000/mm³. Ecografía: litiasis vesicular y colédoco de 11 mm.",
+      pregunta: "¿Cuál es el siguiente paso más adecuado?",
+      opciones: [
+        { letra: "A", texto: "Colecistectomía laparoscópica de urgencia." },
+        { letra: "B", texto: "Antibióticos, hidratación y drenaje biliar endoscópico (CPRE) precoz." },
+        { letra: "C", texto: "Solo antibióticos y reevaluar a las 72 horas." },
+        { letra: "D", texto: "Ácido ursodesoxicólico oral y alta con control ambulatorio." },
+        { letra: "E", texto: "CPRM y esperar su resultado antes de iniciar cualquier tratamiento." }
+      ],
+      correcta: "B",
+      explicacion:
+        "Cumple criterios definitivos de colangitis aguda: fiebre y leucocitosis (A), ictericia y FA elevada (B) y colédoco dilatado (C). Por fiebre ≥39 °C y leucocitos >12 000/mm³ es **grado II (moderada)**, sin disfunción orgánica. Corresponde iniciar antibióticos y soporte y realizar **drenaje biliar precoz**, de elección por CPRE. La colecistectomía se programa después, cuando el cuadro se haya resuelto. Esperar solo con antibióticos se reserva al grado I con buena respuesta."
+    },
+
+    fuentes: [
+      {
+        texto:
+          "Kiriyama S, et al. Tokyo Guidelines 2018: diagnostic criteria and severity grading of acute cholangitis. J Hepatobiliary Pancreat Sci. 2018;25(1):17-30.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/29032610/"
+      },
+      {
+        texto:
+          "Miura F, et al. Tokyo Guidelines 2018: initial management of acute biliary infection and flowchart for acute cholangitis. J Hepatobiliary Pancreat Sci. 2018;25(1):31-40. (Búscala en PubMed por el título.)"
+      },
+      {
+        texto:
+          "Gomi H, et al. Tokyo Guidelines 2018: antimicrobial therapy for acute cholangitis and cholecystitis. J Hepatobiliary Pancreat Sci. 2018;25(1):3-16.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/29090866/"
+      },
+      {
+        texto:
+          "Buxbaum JL, et al. ASGE guideline on the role of endoscopy in the evaluation and management of choledocholithiasis. Gastrointest Endosc. 2019;89(6):1075-1105.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/30979521/"
+      }
+    ]
+  },
+
+  /* ------------------------------------------------------------------
+     TEMAS PENDIENTES (solo tarjeta; aún sin ficha)
+     Cambia estado a "completa" y añade las secciones cuando los redactes.
+     ------------------------------------------------------------------ */
+  {
+    id: "lupus-eritematoso-sistemico",
+    titulo: "Lupus eritematoso sistémico",
+    especialidad: "Reumatología",
+    tipo: "Ficha clínica",
+    descripcion: "Por redactar: dato pivote, autoanticuerpos, afectación renal y trampas de examen.",
+    etiquetas: ["LES", "autoinmune", "ANA", "nefritis lúpica"],
+    estado: "pendiente"
+  },
+  {
+    id: "artritis-reumatoide",
+    titulo: "Artritis reumatoide",
+    especialidad: "Reumatología",
+    tipo: "Ficha clínica",
+    descripcion: "Por redactar: cuadro clínico, diagnóstico, tratamiento inicial y manifestaciones extraarticulares.",
+    etiquetas: ["AR", "artritis", "FR", "anti-CCP"],
+    estado: "pendiente"
+  },
+  {
+    id: "gota-pseudogota-artritis-septica",
+    titulo: "Gota, pseudogota y artritis séptica",
+    especialidad: "Reumatología",
+    tipo: "Cuadro comparativo",
+    descripcion: "Por redactar: comparación según líquido sinovial, cristales y conducta ante una monoartritis.",
+    etiquetas: ["gota", "cristales", "monoartritis", "líquido sinovial"],
+    estado: "pendiente"
+  },
+  {
+    id: "espondiloartritis",
+    titulo: "Espondiloartritis",
+    especialidad: "Reumatología",
+    tipo: "Cuadro comparativo",
+    descripcion: "Por redactar: espondilitis anquilosante, artritis psoriásica y reactiva frente a frente.",
+    etiquetas: ["HLA-B27", "sacroiliítis", "espondilitis anquilosante"],
+    estado: "pendiente"
+  },
+  {
+    id: "esclerosis-sistemica",
+    titulo: "Esclerosis sistémica",
+    especialidad: "Reumatología",
+    tipo: "Ficha clínica",
+    descripcion: "Por redactar: subtipos, anticuerpos, complicaciones viscerales y datos pivote.",
+    etiquetas: ["esclerodermia", "Raynaud", "autoinmune"],
+    estado: "pendiente"
+  },
+  {
+    id: "sindrome-antifosfolipido",
+    titulo: "Síndrome antifosfolípido",
+    especialidad: "Reumatología",
+    tipo: "Ficha clínica",
+    descripcion: "Por redactar: criterios, anticuerpos, trombosis, embarazo y anticoagulación.",
+    etiquetas: ["SAF", "trombosis", "anticoagulación"],
+    estado: "pendiente"
+  },
+  {
+    id: "algoritmo-monoartritis-aguda",
+    titulo: "Algoritmo: monoartritis aguda",
+    especialidad: "Reumatología",
+    tipo: "Algoritmo",
+    descripcion: "Por redactar: qué hacer y en qué orden ante una articulación caliente, dolorosa e inflamada.",
+    etiquetas: ["artrocentesis", "monoartritis", "urgencias"],
+    estado: "pendiente"
+  },
+  {
+    id: "algoritmo-ictericia",
+    titulo: "Algoritmo: ictericia según patrón",
+    especialidad: "Gastroenterología",
+    tipo: "Algoritmo",
+    descripcion: "Por redactar: ruta diagnóstica de la ictericia (prehepática, hepatocelular y colestásica).",
+    etiquetas: ["ictericia", "colestasis", "bilirrubina"],
+    estado: "pendiente"
+  }
+];
+
+</script>
+  <script>
+/* =====================================================================
+   MEDMIND 160 · LÓGICA DE LA APLICACIÓN
+   Este archivo NO contiene contenido médico (eso está en fichas.js).
+   Hace tres cosas: mostrar la biblioteca, filtrar/buscar y mostrar
+   cada ficha. No necesitas editarlo para agregar fichas nuevas.
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  var FICHAS = Array.isArray(window.MEDMIND_FICHAS) ? window.MEDMIND_FICHAS.slice() : [];
+  var main = document.getElementById('contenido');
+
+  /* Estado de búsqueda y filtros (se conserva al abrir y cerrar fichas) */
+  var estado = { q: '', especialidad: 'Todas', tipo: 'Todos' };
+
+  /* ---------------------------------------------------------------
+     Utilidades
+     --------------------------------------------------------------- */
+
+  /* Crea un elemento: h('div', { class: 'x' }, hijo1, hijo2) */
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v === null || v === undefined || v === false) return;
+        if (k === 'class') el.className = v;
+        else if (k === 'text') el.textContent = v;
+        else if (k.indexOf('on') === 0 && typeof v === 'function') el.addEventListener(k.slice(2), v);
+        else el.setAttribute(k, v === true ? '' : v);
+      });
+    }
+    for (var i = 2; i < arguments.length; i++) agregar(el, arguments[i]);
+    return el;
+  }
+
+  function agregar(el, hijo) {
+    if (hijo === null || hijo === undefined || hijo === false) return;
+    if (Array.isArray(hijo)) { hijo.forEach(function (x) { agregar(el, x); }); return; }
+    if (typeof hijo === 'string' || typeof hijo === 'number') {
+      el.appendChild(document.createTextNode(String(hijo)));
+    } else {
+      el.appendChild(hijo);
+    }
+  }
+
+  /* Convierte **texto** en negrita sin usar innerHTML (así el contenido
+     nunca puede inyectar código en la página). */
+  function rico(texto) {
+    var frag = document.createDocumentFragment();
+    String(texto === undefined || texto === null ? '' : texto)
+      .split(/(\*\*[^*]+\*\*)/)
+      .forEach(function (parte) {
+        if (/^\*\*[^*]+\*\*$/.test(parte)) frag.appendChild(h('strong', { text: parte.slice(2, -2) }));
+        else if (parte) frag.appendChild(document.createTextNode(parte));
+      });
+    return frag;
+  }
+
+  /* Minúsculas y sin tildes, para que "vesicula" encuentre "vesícula" */
+  function normalizar(s) {
+    return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+
+  /* Junta todo el texto de una ficha (menos enlaces) para buscar en él */
+  function recolectarTexto(valor, salida) {
+    if (typeof valor === 'string') salida.push(valor);
+    else if (Array.isArray(valor)) valor.forEach(function (v) { recolectarTexto(v, salida); });
+    else if (valor && typeof valor === 'object') {
+      Object.keys(valor).forEach(function (k) {
+        if (k !== 'url' && k !== 'id' && k !== 'tono') recolectarTexto(valor[k], salida);
+      });
+    }
+    return salida;
+  }
+
+  var indice = {};
+  FICHAS.forEach(function (f) {
+    indice[f.id] = normalizar(recolectarTexto(f, []).join(' '));
+  });
+
+  function esCompleta(f) { return f.estado === 'completa'; }
+
+  function unicos(campo) {
+    var vistos = {};
+    FICHAS.forEach(function (f) { if (f[campo]) vistos[f[campo]] = true; });
+    return Object.keys(vistos).sort(function (a, b) { return a.localeCompare(b, 'es'); });
+  }
+
+  /* Avisos en la consola si una ficha completa tiene campos faltantes */
+  function validar() {
+    var requeridos = ['id', 'titulo', 'especialidad', 'tipo', 'descripcion'];
+    var secciones = ['pivote', 'diagnostico', 'diferenciales', 'algoritmos', 'trampas', 'caso', 'fuentes'];
+    var ids = {};
+    FICHAS.forEach(function (f, i) {
+      requeridos.forEach(function (c) {
+        if (!f[c]) console.warn('[MEDMIND] La ficha #' + (i + 1) + ' no tiene el campo "' + c + '".');
+      });
+      if (f.id && ids[f.id]) console.warn('[MEDMIND] El id "' + f.id + '" está repetido.');
+      ids[f.id] = true;
+      if (esCompleta(f)) {
+        secciones.forEach(function (s) {
+          if (!f[s]) console.warn('[MEDMIND] La ficha "' + f.id + '" no tiene la sección "' + s + '".');
+        });
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     Biblioteca
+     --------------------------------------------------------------- */
+
+  function filtrar() {
+    var palabras = normalizar(estado.q).split(/\s+/).filter(Boolean);
+    return FICHAS.filter(function (f) {
+      if (estado.especialidad !== 'Todas' && f.especialidad !== estado.especialidad) return false;
+      if (estado.tipo !== 'Todos' && f.tipo !== estado.tipo) return false;
+      return palabras.every(function (p) { return indice[f.id].indexOf(p) !== -1; });
+    }).sort(function (a, b) {
+      return (esCompleta(b) ? 1 : 0) - (esCompleta(a) ? 1 : 0);
+    });
+  }
+
+  function tarjeta(f) {
+    var completa = esCompleta(f);
+    var boton = completa
+      ? h('a', { class: 'btn', href: '#/ficha/' + encodeURIComponent(f.id), 'aria-label': 'Abrir ficha: ' + f.titulo }, 'Abrir ficha')
+      : h('span', { class: 'btn btn--off', 'aria-disabled': 'true' }, 'Próximamente');
+
+    return h('article', { class: 'card' + (completa ? '' : ' card--pendiente') },
+      h('div', { class: 'card-etiquetas' },
+        h('span', { class: 'badge badge--esp', text: f.especialidad }),
+        h('span', { class: 'badge badge--tipo', text: f.tipo })
+      ),
+      h('h3', { text: f.titulo }),
+      h('p', { text: f.descripcion }),
+      h('div', { class: 'card-pie' },
+        completa
+          ? (f.revisado ? h('span') : h('span', { class: 'badge badge--demo', text: 'Demostración sin revisión médica' }))
+          : h('span', { class: 'badge badge--pend', text: 'Pendiente de redactar' }),
+        boton
+      )
+    );
+  }
+
+  function mostrarBiblioteca() {
+    var completas = FICHAS.filter(esCompleta).length;
+    var pendientes = FICHAS.length - completas;
+
+    var buscador = h('input', {
+      id: 'buscar', type: 'search', autocomplete: 'off',
+      placeholder: 'Escribe un nombre o palabra clave: colangitis, Charcot, CPRE…',
+      value: estado.q
+    });
+
+    var grid = h('div', { class: 'grid' });
+    var contador = h('p', { role: 'status', 'aria-live': 'polite' });
+    var limpiar = h('button', { type: 'button', class: 'link-btn', text: 'Limpiar búsqueda y filtros' });
+
+    var botonesEsp = [];
+    var botonesTipo = [];
+
+    function chips(lista, valorTodos, campo, coleccion) {
+      return [valorTodos].concat(lista).map(function (valor) {
+        var b = h('button', { type: 'button', class: 'chip', 'aria-pressed': 'false', text: valor });
+        b.addEventListener('click', function () {
+          estado[campo] = valor;
+          actualizar();
+        });
+        coleccion.push({ valor: valor, el: b });
+        return b;
+      });
+    }
+
+    function actualizar() {
+      botonesEsp.forEach(function (c) { c.el.setAttribute('aria-pressed', String(c.valor === estado.especialidad)); });
+      botonesTipo.forEach(function (c) { c.el.setAttribute('aria-pressed', String(c.valor === estado.tipo)); });
+
+      var lista = filtrar();
+      grid.replaceChildren();
+      if (lista.length === 0) {
+        grid.appendChild(h('div', { class: 'vacio' },
+          h('p', { text: 'No hay fichas que coincidan con tu búsqueda.' }),
+          h('p', { text: 'Prueba con otra palabra o quita algún filtro.' })
+        ));
+      } else {
+        lista.forEach(function (f) { grid.appendChild(tarjeta(f)); });
+      }
+      contador.textContent = lista.length === 1 ? '1 ficha encontrada' : lista.length + ' fichas encontradas';
+      limpiar.hidden = !(estado.q || estado.especialidad !== 'Todas' || estado.tipo !== 'Todos');
+    }
+
+    buscador.addEventListener('input', function () {
+      estado.q = buscador.value;
+      actualizar();
+    });
+    limpiar.addEventListener('click', function () {
+      estado = { q: '', especialidad: 'Todas', tipo: 'Todos' };
+      buscador.value = '';
+      actualizar();
+      buscador.focus();
+    });
+
+    var resumen = completas + (completas === 1 ? ' ficha lista' : ' fichas listas') +
+      ' y ' + pendientes + (pendientes === 1 ? ' tema por redactar.' : ' temas por redactar.');
+
+    var vista = h('div', null,
+      h('section', { class: 'intro' },
+        h('h1', { id: 'titulo-pagina', tabindex: '-1', text: 'Fichas médicas visuales' }),
+        h('p', { text: 'Resúmenes de una página para el Residentado Médico: dato pivote, diferenciales, algoritmo y trampas de examen. Con énfasis en Reumatología. ' + resumen })
+      ),
+      h('section', { class: 'panel-busqueda no-print', 'aria-label': 'Buscar y filtrar fichas' },
+        h('div', { class: 'buscador' },
+          h('label', { for: 'buscar', text: 'Buscar fichas' }),
+          buscador
+        ),
+        h('div', { class: 'filtros' },
+          h('div', { class: 'grupo-filtro', role: 'group', 'aria-label': 'Filtrar por especialidad' },
+            h('span', { class: 'titulo', text: 'Especialidad' }),
+            chips(unicos('especialidad'), 'Todas', 'especialidad', botonesEsp)
+          ),
+          h('div', { class: 'grupo-filtro', role: 'group', 'aria-label': 'Filtrar por tipo de ficha' },
+            h('span', { class: 'titulo', text: 'Tipo de ficha' }),
+            chips(unicos('tipo'), 'Todos', 'tipo', botonesTipo)
+          )
+        )
+      ),
+      h('div', { class: 'resultados-barra no-print' }, contador, limpiar),
+      grid
+    );
+
+    pintar(vista, 'MEDMIND 160, biblioteca visual para CONAREME 2027');
+    actualizar();
+  }
+
+  /* ---------------------------------------------------------------
+     Ficha
+     --------------------------------------------------------------- */
+
+  function seccion(clase, titulo) {
+    var el = h('section', { class: 'panel ' + clase }, h('h2', { text: titulo }));
+    for (var i = 2; i < arguments.length; i++) agregar(el, arguments[i]);
+    return el;
+  }
+
+  function secPivote(p) {
+    if (!p) return null;
+    return seccion('panel--pivote', 'Dato pivote',
+      p.destacado && h('p', { class: 'destacado' }, rico(p.destacado)),
+      p.puntos && h('ul', { class: 'lista' }, p.puntos.map(function (t) { return h('li', null, rico(t)); }))
+    );
+  }
+
+  function secDiagnostico(d) {
+    if (!d) return null;
+    var tabla = d.tabla && h('div', { class: 'criterios' },
+      d.tablaTitulo && h('h3', { text: d.tablaTitulo }),
+      d.tabla.map(function (g) {
+        return h('div', { class: 'criterio-grupo' },
+          h('h4', { text: g.grupo }),
+          h('ul', null, (g.items || []).map(function (i) { return h('li', { text: i }); }))
+        );
+      }),
+      (d.reglaSospecha || d.reglaDefinitivo) && h('div', { class: 'reglas' },
+        d.reglaSospecha && h('p', null, rico(d.reglaSospecha)),
+        d.reglaDefinitivo && h('p', null, rico(d.reglaDefinitivo))
+      )
+    );
+    return seccion('panel--diagnostico', 'Diagnóstico más probable',
+      d.principal && h('p', { class: 'diagnostico-principal', text: d.principal }),
+      d.explicacion && h('p', null, rico(d.explicacion)),
+      tabla
+    );
+  }
+
+  function secDiferenciales(lista) {
+    if (!lista || !lista.length) return null;
+    return seccion('panel--diferenciales', 'Diagnósticos diferenciales y cómo distinguirlos',
+      h('div', { class: 'dif-grid' }, lista.map(function (d) {
+        return h('div', { class: 'dif' }, h('h3', { text: d.nombre }), h('p', null, rico(d.claves)));
+      }))
+    );
+  }
+
+  function secAlgoritmos(bloques) {
+    if (!bloques || !bloques.length) return null;
+    return seccion('panel--algoritmo', 'Algoritmo diagnóstico y conducta',
+      bloques.map(function (b) {
+        return h('div', { class: 'flow-bloque' },
+          b.titulo && h('h3', { text: b.titulo }),
+          h('ol', { class: 'flow' }, (b.pasos || []).map(function (p, i) {
+            return h('li', { class: 'paso' },
+              h('span', { class: 'paso-num', 'aria-hidden': 'true', text: String(i + 1) }),
+              h('div', { class: 'paso-cuerpo' },
+                h('h4', { text: p.titulo }),
+                p.detalle && h('p', null, rico(p.detalle)),
+                p.ramas && h('div', { class: 'ramas' }, p.ramas.map(function (r) {
+                  return h('div', { class: 'rama tono-' + (r.tono || 'neutro') },
+                    h('strong', { text: r.etiqueta }),
+                    h('p', null, rico(r.texto)),
+                    r.accion && h('p', { class: 'rama-accion' }, rico(r.accion))
+                  );
+                }))
+              )
+            );
+          }))
+        );
+      })
+    );
+  }
+
+  function secTrampas(lista) {
+    if (!lista || !lista.length) return null;
+    return seccion('panel--trampas', 'Trampas frecuentes de examen',
+      h('ul', { class: 'trampas' }, lista.map(function (t) { return h('li', null, rico(t)); }))
+    );
+  }
+
+  function secCaso(caso) {
+    if (!caso) return null;
+    var respondido = false;
+    var veredicto = h('p', { class: 'veredicto', role: 'status' });
+    var reiniciar = h('button', { type: 'button', class: 'btn btn--suave opciones-reiniciar', text: 'Intentar de nuevo' });
+    var respuesta = h('div', { class: 'respuesta', hidden: true },
+      veredicto,
+      h('p', null, h('strong', { text: 'Respuesta correcta: ' + caso.correcta + '. ' }), rico(caso.explicacion)),
+      reiniciar
+    );
+    var botones = [];
+
+    (caso.opciones || []).forEach(function (o) {
+      var b = h('button', { type: 'button', class: 'opcion', 'data-letra': o.letra },
+        h('span', { class: 'opcion-letra', 'aria-hidden': 'true', text: o.letra }),
+        h('span', { text: o.texto })
+      );
+      b.addEventListener('click', function () {
+        if (respondido) return;
+        respondido = true;
+        var acerto = o.letra === caso.correcta;
+        botones.forEach(function (x) {
+          x.el.disabled = true;
+          if (x.letra === caso.correcta) x.el.classList.add('correcta');
+        });
+        if (!acerto) b.classList.add('incorrecta');
+        veredicto.textContent = acerto ? 'Correcto.' : 'No es esa. Revisa la explicación.';
+        veredicto.className = 'veredicto ' + (acerto ? 'ok' : 'mal');
+        respuesta.hidden = false;
+      });
+      botones.push({ letra: o.letra, el: b });
+    });
+
+    reiniciar.addEventListener('click', function () {
+      respondido = false;
+      botones.forEach(function (x) { x.el.disabled = false; x.el.classList.remove('correcta', 'incorrecta'); });
+      veredicto.textContent = '';
+      veredicto.className = 'veredicto';
+      respuesta.hidden = true;
+      botones[0] && botones[0].el.focus();
+    });
+
+    return seccion('panel--caso', 'Mini caso clínico y autoevaluación',
+      h('p', { class: 'caso-enunciado' }, rico(caso.enunciado)),
+      caso.pregunta && h('p', { class: 'caso-pregunta', text: caso.pregunta }),
+      h('div', { class: 'opciones' }, botones.map(function (x) { return x.el; })),
+      respuesta
+    );
+  }
+
+  function secFuentes(lista) {
+    if (!lista || !lista.length) return null;
+    return seccion('panel--fuentes', 'Fuentes para verificar el contenido',
+      h('ul', { class: 'fuentes' }, lista.map(function (s) {
+        return h('li', null,
+          s.texto,
+          s.url && [' ', h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: 'Abrir fuente' })]
+        );
+      }))
+    );
+  }
+
+  function mostrarFicha(id) {
+    var f = FICHAS.filter(function (x) { return x.id === id && esCompleta(x); })[0];
+    if (!f) {
+      pintar(h('div', { class: 'vacio' },
+        h('h1', { id: 'titulo-pagina', tabindex: '-1', text: 'No encontramos esa ficha' }),
+        h('p', { text: 'Puede que el enlace esté mal escrito o que la ficha todavía no esté redactada.' }),
+        h('p', null, h('a', { class: 'btn', href: '#/' }, 'Volver a la biblioteca'))
+      ), 'Ficha no encontrada, MEDMIND 160');
+      return;
+    }
+
+    var titulo = 'MEDMIND 160, ' + f.titulo;
+
+    var vista = h('div', null,
+      h('div', { class: 'toolbar no-print' },
+        h('a', { class: 'btn btn--suave', href: '#/' }, 'Volver a la biblioteca'),
+        /* La vista previa dentro de Claude no puede abrir el cuadro de impresión;
+           allí se activa MEDMIND_SIN_IMPRESION y el botón no se muestra. */
+        !window.MEDMIND_SIN_IMPRESION && h('button', { type: 'button', class: 'btn', onclick: function () { window.print(); } }, 'Imprimir o guardar como PDF')
+      ),
+      h('article', { class: 'ficha' },
+        h('header', { class: 'ficha-cabecera' },
+          h('div', { class: 'card-etiquetas' },
+            h('span', { class: 'badge badge--esp', text: f.especialidad }),
+            h('span', { class: 'badge badge--tipo', text: f.tipo })
+          ),
+          h('h1', { id: 'titulo-pagina', tabindex: '-1', text: f.titulo }),
+          h('p', null, rico(f.descripcion)),
+          h('p', { class: 'ficha-meta' },
+            'Actualizada el ' + (f.actualizado || 'sin fecha') + '. ' +
+            (f.revisado ? 'Revisada.' : 'Sin revisión médica.')
+          )
+        ),
+        !f.revisado && h('p', { class: 'aviso' },
+          h('strong', { text: 'Verifica antes de estudiar. ' }),
+          (f.verificacion && f.verificacion.nota) ||
+          'Este contenido no ha sido revisado por un médico o docente. Contrástalo con las fuentes citadas.'
+        ),
+        secPivote(f.pivote),
+        secDiagnostico(f.diagnostico),
+        secDiferenciales(f.diferenciales),
+        secAlgoritmos(f.algoritmos),
+        secTrampas(f.trampas),
+        secCaso(f.caso),
+        secFuentes(f.fuentes)
+      )
+    );
+
+    pintar(vista, titulo);
+  }
+
+  /* ---------------------------------------------------------------
+     Navegación (usa el # de la dirección, funciona en GitHub Pages)
+       #/            biblioteca
+       #/ficha/<id>  una ficha
+     --------------------------------------------------------------- */
+
+  function pintar(vista, titulo) {
+    main.replaceChildren(vista);
+    document.title = titulo;
+    window.scrollTo(0, 0);
+    var t = document.getElementById('titulo-pagina');
+    if (t) t.focus({ preventScroll: true });
+  }
+
+  function ruta() {
+    var m = /^#\/ficha\/([^/?#]+)/.exec(window.location.hash);
+    if (m) mostrarFicha(decodeURIComponent(m[1]));
+    else mostrarBiblioteca();
+  }
+
+  validar();
+  window.addEventListener('hashchange', ruta);
+  ruta();
+})();
+
+</script>
+</body>
+</html>
